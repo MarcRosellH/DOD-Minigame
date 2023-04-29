@@ -11,7 +11,12 @@ int main()
 
 	App* app = DBG_NEW App;
 
+	app_initialize(app);
+	app_start(app);
+	app_update(app);
+	app_clean_up(app);
 
+	RELEASE(app);
 
 	return 0;
 }
