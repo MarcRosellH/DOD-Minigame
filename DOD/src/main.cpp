@@ -1,8 +1,12 @@
 #pragma once
 
+#include <fstream>
+#include <iostream>
+
 #include "app.h"
 #include "memleak.h"
 #include "utils.h"
+#include "scene.h"
 
 int main()
 {
@@ -11,10 +15,54 @@ int main()
 
 	App* app = DBG_NEW App;
 
+	std::cout << "DOD simulation of " << MAX_OBJECTS << " objects during " << MAX_TIME << " seconds:" << std::endl;
+	std::cout << "Average values above may differ due to calculating them using incremental averaging!" << std::endl;
+
 	app_initialize(app);
 	app_start(app);
-	app_update(app);
+	app->last_time = Clock::now();
+	int i = 0;
+	while (app->running)
+	{
+		app_update(app);
+		auto now = Clock::now();
+		app->delta_time = std::chrono::duration<float, std::chrono::seconds::period>(now - app->last_time).count();
+		app->total_time += app->delta_time;
+
+
+		app->average_delta_time = app->average_delta_time + ((app->delta_time - app->average_delta_time) / app->times_count);
+		app->fps = 1 / app->delta_time;
+		app->average_fps = app->average_fps + ((app->fps - app->average_fps) / app->times_count);
+		app->times_count++;
+
+		app->delta_time_list.push_back(app->delta_time);
+		app->last_time = now;
+
+		app->running = app->total_time < MAX_TIME;
+	}
+	std::cout << app->delta_time_list.size() << std::endl;
 	app_clean_up(app);
+
+#ifdef _WIN64
+	std::string platform = "x64";
+#elif _WIN32
+	std::string platform = "x86";
+#endif
+	std::string name = std::string(platform + "output_" + std::to_string(MAX_OBJECTS) + "_objects_in_" + std::to_string((int)MAX_TIME) + ".txt");
+	std::ofstream outfile(name);
+	for (unsigned long long i = 0; i < app->delta_time_list.size(); ++i)
+	{
+		outfile << app->delta_time_list[i] << std::endl;
+	}
+
+	outfile.close();
+	std::cout << "\nAverage update time: " << app->average_delta_time << " seconds" << std::endl;
+	std::cout << "Average updates per second: " << app->average_fps << std::endl;
+	std::cout << "In this time there were a total of " << app->total_created << " objects created." << std::endl;
+	std::cout << "In this time there were a total of " << app->total_destroyed << " objects destroyed." << std::endl;
+	std::cout << "Update times stored in file " << name << std::endl;
+	std::cout << "\nPress any key to close..." << std::endl;
+	char a = getchar();
 
 	RELEASE(app);
 

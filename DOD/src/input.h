@@ -40,7 +40,7 @@ struct Input
     Button_State    keys[KEY_COUNT];
 };
 
-void input_initialize(App* _app);
+//void input_initialize(App* _app);
 void input_state_change(Input* _input);
 
 // OpenGL input callbacks
