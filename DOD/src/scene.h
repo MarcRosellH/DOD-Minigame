@@ -2,7 +2,7 @@
 #ifndef __SCENE_H__
 #define __SCENE_H__
 
-#define MAX_OBJECTS 1024
+#define MAX_OBJECTS 2048
 
 struct Scene;
 

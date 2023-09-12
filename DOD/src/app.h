@@ -5,7 +5,7 @@
 #include <chrono>
 #include <vector>
 
-#define MAX_TIME 10
+#define MAX_TIME 11
 
 typedef std::chrono::steady_clock Clock;
 
