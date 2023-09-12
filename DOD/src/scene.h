@@ -23,7 +23,7 @@ struct ObjectData
 
 	void apply_transform(float dt);
 	void objects_to_delete();
-	void re_create_objects(Scene* _scene);	// Returns an index from which data can be re-created to have new objects
+	void re_create_objects(Scene* _scene);
 
 	Scene* scene_ref;
 };
@@ -31,8 +31,6 @@ struct ObjectData
 struct Scene
 {
 	ObjectData* objects;
-	int			index_to_recreate;
-
 
 	unsigned long long total_created;
 	unsigned long long total_destroyed;

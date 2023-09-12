@@ -40,7 +40,6 @@ int main()
 
 		app->running = app->total_time < MAX_TIME;
 	}
-	std::cout << app->delta_time_list.size() << std::endl;
 	app_clean_up(app);
 
 #ifdef _WIN64
@@ -49,6 +48,12 @@ int main()
 	std::string platform = "x86";
 #endif
 	std::string name = std::string(platform + "output_" + std::to_string(MAX_OBJECTS) + "_objects_in_" + std::to_string((int)MAX_TIME) + ".txt");
+
+	std::cout << "\nAverage update time: " << app->average_delta_time << " seconds" << std::endl;
+	std::cout << "Average updates per second: " << app->average_fps << std::endl;
+	std::cout << std::to_string(app->delta_time_list.size()) << " update times data in total." << std::endl;
+	std::cout << "Saving update times in file " << name << "..." << std::endl;
+
 	std::ofstream outfile(name);
 	for (unsigned long long i = 0; i < app->delta_time_list.size(); ++i)
 	{
@@ -56,11 +61,9 @@ int main()
 	}
 
 	outfile.close();
-	std::cout << "\nAverage update time: " << app->average_delta_time << " seconds" << std::endl;
-	std::cout << "Average updates per second: " << app->average_fps << std::endl;
-	std::cout << "In this time there were a total of " << app->total_created << " objects created." << std::endl;
-	std::cout << "In this time there were a total of " << app->total_destroyed << " objects destroyed." << std::endl;
-	std::cout << "Update times stored in file " << name << std::endl;
+	app->delta_time_list.clear();
+
+	std::cout << "Data saved." << std::endl;
 	std::cout << "\nPress any key to close..." << std::endl;
 	char a = getchar();
 
